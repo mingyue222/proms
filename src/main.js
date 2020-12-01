@@ -3,7 +3,9 @@ import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
 // 导入全局样式表
-import './styles/global.css'
+import './assets/styles/global.css'
+
+import './utils/request.js'
 
 Vue.config.productionTip = false
 
