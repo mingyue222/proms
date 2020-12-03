@@ -5,7 +5,6 @@ axios.defaults.baseURL = 'http://8.131.91.46:7000/api/private/v1'
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
-  console.log(config)
   config.headers.Authorization = sessionStorage.getItem('token')
   // 在发送请求之前做些什么
   return config
