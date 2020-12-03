@@ -12,15 +12,15 @@
       <el-aside :width='iscollapse? width = "64px":width="200px" '>
         <div class="toggle_btn" @click="toggleCollapse">| | |</div>
         <el-menu
-          default-active="2"
           class="el-menu-vertical-demo"
           background-color="yellowgreen"
           text-color="#fff"
-          active-text-color="#409EFF"
+          active-text-color="pink"
           unique-opened
           :collapse="iscollapse"
           :collapse-transition="false"
           router
+          :default-active='activePath'
         >
           <el-submenu
             :index="item.id + ''"
@@ -33,9 +33,10 @@
             </template>
             <!-- 二级菜单 -->
             <el-menu-item
-              :index="'/' + item.path "
+              :index="'/' + subItem.path "
               v-for="subItem in item.children"
               :key="subItem.id"
+              @click="saveNavActive('/' + subItem.path)"
             >
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -66,14 +67,19 @@ export default {
         125: 'iconfont icon-user',
         145: 'iconfont icon-baobiao'
       },
-      iscollapse: false
-      // iscollapse_transition: false
+      iscollapse: false,
+      activePath: ''
     }
   },
   created () {
     this.getMenus()
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
+    saveNavActive (activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
+    },
     logout () {
       window.sessionStorage.removeItem('token')
       this.$router.push('/login')
