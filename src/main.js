@@ -7,6 +7,8 @@ import './assets/styles/global.css'
 
 import './utils/request.js'
 
+import './assets/fonts/iconfont.css'
+
 Vue.config.productionTip = false
 
 new Vue({
