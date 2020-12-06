@@ -41,14 +41,29 @@
         <el-table-column align="center" label="角色管理" prop='roleName'></el-table-column>
         <el-table-column align="center" label="角色描述" prop='roleDesc' ></el-table-column>
         <el-table-column align="center" label="操作" >
-          <template>
+          <template slot-scope='scope'>
               <el-button size="small" type="success" icon="el-icon-search" plain>编辑</el-button>
               <el-button size="small" type="warning" icon="el-icon-delete" plain>删除</el-button>
-              <el-button size="small" type="danger" icon="el-icon-s-tools" plain>编辑</el-button>
+              <el-button size="small" type="danger" icon="el-icon-s-tools" plain @click="showSetRightDialog(scope.row)">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
+
+    <el-dialog
+  title="分配权限"
+  :visible.sync="setRightDialogVisible"
+  width="50%"
+  @close='hideSetRightsDiglog'
+  >
+  <!-- data:是数据源 -->
+  <!-- props:就是告诉tree组件按照那种格式渲染数据，确定渲染的父子级别关系 -->
+ <el-tree ref="rightRef" :data="rightList" :props="treeProps" show-checkbox default-expand-all node-key='id' :default-checked-keys='defKeys'></el-tree>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="setRightDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="setRghts">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 
@@ -57,7 +72,17 @@ export default {
   name: 'Roles',
   data () {
     return {
-      rolesList: []
+      rolesList: [],
+      setRightDialogVisible: false,
+      rightList: [],
+
+      // 树形组件需要的属性格式
+      treeProps: {
+        label: 'authName', // 是指树形组件显示为文本
+        children: 'children' // 只是如何确认数据的父子级别关系
+      },
+      defKeys: [],
+      roldId: ''
     }
   },
   created () {
@@ -88,6 +113,38 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
 
       this.rolesList = res.data
+    },
+    // 设置处理默认选中项的方法
+    async showSetRightDialog (role) {
+      const { data: res } = await this.$http.get('rights/tree')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.rightList = res.data
+      this.roldId = role.id
+      // 调用处理默认选中的方法
+      this.getLetKeys(role, this.defKeys)
+      this.setRightDialogVisible = true
+    },
+    // node 指需要处理的数据
+    // arr:实际上就是指 defkeys
+    getLetKeys (node, arr) {
+      // 如果没有处理的数据没有children 属性，说明是三级的权限，只需要将id追加到defkeys
+      if (!node.children) return arr.push(node.id)
+      // 如果包含 children 属性 说明一级或者二级权限。需要进行遍历
+      // 遍历以后对每一项都调用 getLetKeys 方法， 判断是否存在children属性
+      node.children.forEach(item => this.getLetKeys(item, arr))
+    },
+    hideSetRightsDiglog () {
+      this.defKeys = []
+    },
+    async setRghts () {
+      const keys = [...this.$refs.rightRef.getCheckedKeys(), ...this.$refs.rightRef.getHalfCheckedKeys()]
+      console.log(keys)
+      const newKeys = keys.join(',')
+      const { data: res } = await this.$http.post(`roles/${this.roldId}/rights`, { rids: newKeys })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success('权限分配成功')
+      this.getRolesList()
+      this.setRightDialogVisible = false
     }
   }
 }
