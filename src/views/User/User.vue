@@ -86,6 +86,7 @@
                 icon="el-icon-s-tools"
                 type="warning"
                 plain
+                @click="showEditRoleHandle(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -160,6 +161,31 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 点击权限的弹框 -->
+    <el-dialog
+  title="提示"
+  :visible.sync="setRoleDialogVisible"
+  width="50%">
+  <div>
+    <p>用户名: {{ roleInfo.username }}</p>
+    <p>角色名: {{ roleInfo.role_name }}</p>
+    <p>设置角色：
+      <el-select v-model="selectRoleId" placeholder="请选择">
+    <el-option
+      v-for="item in roleList"
+      :key="item.id"
+      :label="item.roleName"
+      :value="item.id">
+    </el-option>
+  </el-select>
+    </p>
+  </div>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="setRole">确 定</el-button>
+  </span>
+</el-dialog>
   </div>
 </template>
 
@@ -224,7 +250,11 @@ export default {
           { validator: checkMobile, trigger: 'blur' }
         ]
 
-      }
+      },
+      setRoleDialogVisible: false,
+      roleInfo: {},
+      roleList: [],
+      selectRoleId: ''
     }
   },
   created () {
@@ -246,21 +276,6 @@ export default {
       this.$message.success('删除用户成功！ ')
       this.getUserList()
     },
-    // 删除用户
-    // async deleteUser (userId) {
-    //   const confirmRes = await this.$confirm('是否删除该用户, 是否继续?', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).cath(err => err)
-    //   if (confirmRes !== 'confirm') {
-    //     return this.$message.error('已经取消删除')
-    //   }
-    //   const { data: res } = await this.$http.delete(`users/${userId}`)
-    //   if (res.meta.status !== 200) return this.$message.error('删除用户失败！ ')
-    //   this.$message.success('删除用户成功！ ')
-    //   this.getUserList()
-    // },
     // 编辑用户
     toEdit () {
       this.$refs.ruleForm.validate(async (vaild) => {
@@ -327,7 +342,25 @@ export default {
     handleCurrentChange (newPage) {
       this.queryInfo.pagenum = newPage
       this.getUserList()
+    },
+    // 点击权限管理
+    async showEditRoleHandle (role) {
+      this.roleInfo = role
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.error(res.meta.msg)
+      this.roleList = res.data
+      this.setRoleDialogVisible = true
+    },
+    // 分配当前用户的角色
+    async setRole () {
+      const { data: res } = await this.$http.put(`users/${this.userId}/role`, { rid: this.selectRoleId })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getUserList()
+      this.setRoleDialogVisible = false
     }
+
   }
 }
 </script>
