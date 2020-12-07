@@ -147,7 +147,6 @@ export default {
         value: 'cat_id',
         label: 'cat_name',
         children: 'children',
-        // expandTrigger: 'hover',
         checkStrictly: true
       },
       // 选中的父级分类的id数组
@@ -167,6 +166,7 @@ export default {
       this.$message.success(res.meta.msg)
       console.log(res.data.result)
       this.cateList = res.data.result
+      this.total = res.data.total
     },
     handleSizeChange (newSize) {
       this.query.pagesize = newSize
@@ -189,7 +189,7 @@ export default {
     },
     // 点击按钮，展示添加分类的对话框
     handleChange () {
-      console.log(this.selectedKeys)
+      // console.log(this.selectedKeys)
       if (this.selectedKeys.length > 0) {
         // 父级分类的id
         this.addCateForm.cat_pid = this.selectedKeys[
@@ -206,7 +206,8 @@ export default {
       this.$refs.addCateRuleForm.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post('categories', this.addCateForm)
-        if (res.meta.status !== 2001) return this.$message.error(res.meta.msg)
+        console.log(res)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
         this.getCateList()
         this.addCateDialogVisible = false
