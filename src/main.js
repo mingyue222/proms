@@ -8,7 +8,8 @@ import './assets/styles/global.css'
 import './utils/request.js'
 
 import './assets/fonts/iconfont.css'
-
+import ZkTable from 'vue-table-with-tree-grid'
+Vue.component('tree-table', ZkTable)
 Vue.config.productionTip = false
 
 new Vue({

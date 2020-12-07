@@ -254,7 +254,8 @@ export default {
       setRoleDialogVisible: false,
       roleInfo: {},
       roleList: [],
-      selectRoleId: ''
+      selectRoleId: '',
+      userId: ''
     }
   },
   created () {
@@ -350,6 +351,7 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.error(res.meta.msg)
       this.roleList = res.data
+      this.userId = role.id
       this.setRoleDialogVisible = true
     },
     // 分配当前用户的角色
@@ -357,7 +359,6 @@ export default {
       const { data: res } = await this.$http.put(`users/${this.userId}/role`, { rid: this.selectRoleId })
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
-      this.getUserList()
       this.setRoleDialogVisible = false
     }
 

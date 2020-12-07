@@ -9,9 +9,9 @@ import Welcome from '@/views/Welcome.vue'
 import User from '@/views/User/User.vue'
 import Rights from '@/views/rights/Rights.vue'
 import Roles from '@/views/rights/Roles.vue'
-
+import Cate from '@/views/Goods/Cate.vue'
+import Params from '@/views/Goods/Params.vue'
 Vue.use(VueRouter)
-
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
@@ -23,7 +23,9 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/users', component: User },
       { path: '/rights', component: Rights },
-      { path: '/roles', component: Roles }
+      { path: '/roles', component: Roles },
+      { path: '/categories', component: Cate },
+      { path: '/params', component: Params }
     ]
   }
 ]
