@@ -6,7 +6,8 @@
       <el-breadcrumb-item>商品管理</el-breadcrumb-item>
       <el-breadcrumb-item>商品分类</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 卡片区域 -->    <el-card class="box-card">
+    <!-- 卡片区域 -->
+    <el-card class="box-card">
       <el-row>
         <el-col :span="8">
           <el-input  placeholder="请输入内容" v-model="query.query" clearable @clear='removeSearch' >
