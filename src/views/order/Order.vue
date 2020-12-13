@@ -50,7 +50,7 @@
       </el-pagination>
       </el-card>
       <!-- 点击编辑的弹出层 -->
-         <el-dialog
+        <el-dialog
           title="提示"
           :visible.sync="orderDialogVisible"
           width="50%">
@@ -62,11 +62,6 @@
                   @change="handleChange"></el-cascader>
               </el-form-item>
             </el-form>
-
-          <span slot="footer" class="dialog-footer">
-            <el-button @click="orderDialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="orderDialogVisible = false">确 定</el-button>
-          </span>
         </el-dialog>
 
   </div>
